@@ -1,0 +1,55 @@
+---
+title: "Thunder Assessment"
+output: html_document
+date: "2022-09-28"
+---
+#Just a gentle reminder that I didn't upload the given data set because of the confidentiality, so when running a test on this code, please change the file path based on the situation.
+
+## Read in Data
+```{r}
+library(readr)
+library(tidyverse)
+
+#Read in Data
+shots_data <- read.csv("~/Downloads/shots_data.csv")
+
+#Define shot types based on the given criterion 
+shots_data$ShotType <- with(shots_data, 
+                       ifelse(abs(x) > 22 & abs(y) <= 7.8, 'C3', 
+                       ifelse(abs(y) > 7.8 & sqrt(x^2+y^2) > 23.75, 'NC3','2Pt')))
+View(shots_data)
+```
+
+## Team A Stats
+```{r}
+#Shooting Percentage
+TeamA <- shots_data %>%
+  filter(team == 'Team A')%>%
+  group_by(ShotType)%>%
+  summarise(Shooting_Percentage = sum(fgmade)/n())
+TeamA
+
+#eFG%
+shots_data %>%
+  filter(team == 'Team A')%>%
+  group_by(ShotType)%>%
+  summarise(eFGPercentage = (sum(fgmade)+(0.5*sum(ifelse(ShotType == '2Pt', 0,fgmade))))
+                              /n() )
+```
+
+## Team B stats
+```{r}
+#Shooting Percentage
+TeamB <- shots_data %>%
+  filter(team == 'Team B')%>%
+  group_by(ShotType)%>%
+  summarise(Shooting_Percentage = sum(fgmade)/n())
+TeamB
+
+#eFG%
+shots_data %>%
+  filter(team == 'Team B')%>%
+  group_by(ShotType)%>%
+  summarise(eFGPercentage = (sum(fgmade)+(0.5*sum(ifelse(ShotType == '2Pt', 0,fgmade))))
+                              /n() )
+```
